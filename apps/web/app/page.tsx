@@ -1,144 +1,394 @@
+import { withProps } from "@udecode/cn";
+import {
+  createPlugins,
+  Plate,
+  RenderAfterEditable,
+  PlateLeaf,
+} from "@udecode/plate-common";
+import {
+  createParagraphPlugin,
+  ELEMENT_PARAGRAPH,
+} from "@udecode/plate-paragraph";
+import {
+  createHeadingPlugin,
+  ELEMENT_H1,
+  ELEMENT_H2,
+  ELEMENT_H3,
+  ELEMENT_H4,
+  ELEMENT_H5,
+  ELEMENT_H6,
+} from "@udecode/plate-heading";
+import {
+  createBlockquotePlugin,
+  ELEMENT_BLOCKQUOTE,
+} from "@udecode/plate-block-quote";
+import {
+  createCodeBlockPlugin,
+  ELEMENT_CODE_BLOCK,
+  ELEMENT_CODE_LINE,
+  ELEMENT_CODE_SYNTAX,
+} from "@udecode/plate-code-block";
+import {
+  createHorizontalRulePlugin,
+  ELEMENT_HR,
+} from "@udecode/plate-horizontal-rule";
+import { createLinkPlugin, ELEMENT_LINK } from "@udecode/plate-link";
+import {
+  createImagePlugin,
+  ELEMENT_IMAGE,
+  createMediaEmbedPlugin,
+  ELEMENT_MEDIA_EMBED,
+} from "@udecode/plate-media";
+import { createCaptionPlugin } from "@udecode/plate-caption";
+import {
+  createMentionPlugin,
+  ELEMENT_MENTION,
+  ELEMENT_MENTION_INPUT,
+} from "@udecode/plate-mention";
+import { createTodoListPlugin, ELEMENT_TODO_LI } from "@udecode/plate-list";
+import {
+  createExcalidrawPlugin,
+  ELEMENT_EXCALIDRAW,
+} from "@udecode/plate-excalidraw";
+import { createTogglePlugin, ELEMENT_TOGGLE } from "@udecode/plate-toggle";
+import {
+  createTablePlugin,
+  ELEMENT_TABLE,
+  ELEMENT_TR,
+  ELEMENT_TD,
+  ELEMENT_TH,
+} from "@udecode/plate-table";
+import {
+  createBoldPlugin,
+  MARK_BOLD,
+  createItalicPlugin,
+  MARK_ITALIC,
+  createUnderlinePlugin,
+  MARK_UNDERLINE,
+  createStrikethroughPlugin,
+  MARK_STRIKETHROUGH,
+  createCodePlugin,
+  MARK_CODE,
+  createSubscriptPlugin,
+  MARK_SUBSCRIPT,
+  createSuperscriptPlugin,
+  MARK_SUPERSCRIPT,
+} from "@udecode/plate-basic-marks";
+import {
+  createFontColorPlugin,
+  createFontBackgroundColorPlugin,
+  createFontSizePlugin,
+} from "@udecode/plate-font";
+import {
+  createHighlightPlugin,
+  MARK_HIGHLIGHT,
+} from "@udecode/plate-highlight";
+import { createKbdPlugin, MARK_KBD } from "@udecode/plate-kbd";
+import { createAlignPlugin } from "@udecode/plate-alignment";
+import { createIndentPlugin } from "@udecode/plate-indent";
+import { createIndentListPlugin } from "@udecode/plate-indent-list";
+import { createLineHeightPlugin } from "@udecode/plate-line-height";
+import { createAutoformatPlugin } from "@udecode/plate-autoformat";
+import { createBlockSelectionPlugin } from "@udecode/plate-selection";
+import { createComboboxPlugin } from "@udecode/plate-combobox";
+import { createDndPlugin } from "@udecode/plate-dnd";
+import { createEmojiPlugin } from "@udecode/plate-emoji";
+import {
+  createExitBreakPlugin,
+  createSoftBreakPlugin,
+} from "@udecode/plate-break";
+import { createNodeIdPlugin } from "@udecode/plate-node-id";
+import { createResetNodePlugin } from "@udecode/plate-reset-node";
+import { createDeletePlugin } from "@udecode/plate-select";
+import { createTabbablePlugin } from "@udecode/plate-tabbable";
+import { createTrailingBlockPlugin } from "@udecode/plate-trailing-block";
+import {
+  createCommentsPlugin,
+  CommentsProvider,
+  MARK_COMMENT,
+} from "@udecode/plate-comments";
+import { createDeserializeDocxPlugin } from "@udecode/plate-serializer-docx";
+import { createDeserializeCsvPlugin } from "@udecode/plate-serializer-csv";
+import { createDeserializeMdPlugin } from "@udecode/plate-serializer-md";
+import { createJuicePlugin } from "@udecode/plate-juice";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
+
+import { BlockquoteElement } from "@repo/ui/components/blockquote-element";
+import { CodeBlockElement } from "@repo/ui/components/code-block-element";
+import { CodeLineElement } from "@repo/ui/components/code-line-element";
+import { CodeSyntaxLeaf } from "@repo/ui/components/code-syntax-leaf";
+import { ExcalidrawElement } from "@repo/ui/components/excalidraw-element";
+import { HrElement } from "@repo/ui/components/hr-element";
+import { ImageElement } from "@repo/ui/components/image-element";
+import { LinkElement } from "@repo/ui/components/link-element";
+import { LinkFloatingToolbar } from "@repo/ui/components/link-floating-toolbar";
+import { ToggleElement } from "@repo/ui/components/toggle-element";
+import { HeadingElement } from "@repo/ui/components/heading-element";
+import { MediaEmbedElement } from "@repo/ui/components/media-embed-element";
+import { MentionElement } from "@repo/ui/components/mention-element";
+import { MentionInputElement } from "@repo/ui/components/mention-input-element";
+import { MentionCombobox } from "@repo/ui/components/mention-combobox";
+import { ParagraphElement } from "@repo/ui/components/paragraph-element";
+import { TableElement } from "@repo/ui/components/table-element";
+
+import {
+  TableCellElement,
+  TableCellHeaderElement,
+} from "@repo/ui/components/table-cell-element";
+import { TodoListElement } from "@repo/ui/components/todo-list-element";
+import { CodeLeaf } from "@repo/ui/components/code-leaf";
+import { CommentLeaf } from "@repo/ui/components/comment-leaf";
+import { CommentsPopover } from "@repo/ui/components/comments-popover";
+import { HighlightLeaf } from "@repo/ui/components/highlight-leaf";
+import { KbdLeaf } from "@repo/ui/components/kbd-leaf";
+import { Editor } from "@repo/ui/components/editor";
+import { FixedToolbar } from "@repo/ui/components/fixed-toolbar";
+import { FixedToolbarButtons } from "@repo/ui/components/fixed-toolbar-buttons";
+import { FloatingToolbar } from "@repo/ui/components/floating-toolbar";
+import { FloatingToolbarButtons } from "@repo/ui/components/floating-toolbar-buttons";
+import { withPlaceholders } from "@repo/ui/components/placeholder";
+import { withDraggables } from "@repo/ui/components/with-draggables";
+import { EmojiCombobox } from "@repo/ui/components/emoji-combobox";
+import { TooltipProvider } from "@repo/ui/components/tooltip";
 import Image from "next/image";
-import { Card } from "@repo/ui/card";
-import { Code } from "@repo/ui/code";
 import styles from "./page.module.css";
-import { Button } from "@repo/ui/button";
+import { TableRowElement } from "@repo/ui/components/table-row-element";
 
-function Gradient({
-  conic,
-  className,
-  small,
-}: {
-  small?: boolean;
-  conic?: boolean;
-  className?: string;
-}): JSX.Element {
-  return (
-    <span
-      className={[
-        styles.gradient,
-        conic ? styles.glowConic : undefined,
-        small ? styles.gradientSmall : styles.gradientLarge,
-        className,
-      ]
-        .filter(Boolean)
-        .join(" ")}
-    />
-  );
-}
+const plugins = createPlugins(
+  [
+    createParagraphPlugin(),
+    createHeadingPlugin(),
+    createBlockquotePlugin(),
+    createCodeBlockPlugin(),
+    createHorizontalRulePlugin(),
+    createLinkPlugin({
+      renderAfterEditable: LinkFloatingToolbar as RenderAfterEditable,
+    }),
+    createImagePlugin(),
+    createMediaEmbedPlugin(),
+    createCaptionPlugin({
+      options: {
+        pluginKeys: [
+          // ELEMENT_IMAGE, ELEMENT_MEDIA_EMBED
+        ],
+      },
+    }),
+    createMentionPlugin(),
+    createTodoListPlugin(),
+    createExcalidrawPlugin(),
+    createTogglePlugin(),
+    createTablePlugin(),
+    createBoldPlugin(),
+    createItalicPlugin(),
+    createUnderlinePlugin(),
+    createStrikethroughPlugin(),
+    createCodePlugin(),
+    createSubscriptPlugin(),
+    createSuperscriptPlugin(),
+    createFontColorPlugin(),
+    createFontBackgroundColorPlugin(),
+    createFontSizePlugin(),
+    createHighlightPlugin(),
+    createKbdPlugin(),
+    createAlignPlugin({
+      inject: {
+        props: {
+          validTypes: [
+            ELEMENT_PARAGRAPH,
+            // ELEMENT_H1, ELEMENT_H2, ELEMENT_H3
+          ],
+        },
+      },
+    }),
+    createIndentPlugin({
+      inject: {
+        props: {
+          validTypes: [
+            ELEMENT_PARAGRAPH,
+            // ELEMENT_H1, ELEMENT_H2, ELEMENT_H3, ELEMENT_BLOCKQUOTE, ELEMENT_CODE_BLOCK
+          ],
+        },
+      },
+    }),
+    createIndentListPlugin({
+      inject: {
+        props: {
+          validTypes: [
+            ELEMENT_PARAGRAPH,
+            // ELEMENT_H1, ELEMENT_H2, ELEMENT_H3, ELEMENT_BLOCKQUOTE, ELEMENT_CODE_BLOCK
+          ],
+        },
+      },
+    }),
+    createLineHeightPlugin({
+      inject: {
+        props: {
+          defaultNodeValue: 1.5,
+          validNodeValues: [1, 1.2, 1.5, 2, 3],
+          validTypes: [
+            ELEMENT_PARAGRAPH,
+            // ELEMENT_H1, ELEMENT_H2, ELEMENT_H3
+          ],
+        },
+      },
+    }),
+    createAutoformatPlugin({
+      options: {
+        rules: [
+          // Usage: https://platejs.org/docs/autoformat
+        ],
+        enableUndoOnDelete: true,
+      },
+    }),
+    createBlockSelectionPlugin({
+      options: {
+        sizes: {
+          top: 0,
+          bottom: 0,
+        },
+      },
+    }),
+    createComboboxPlugin(),
+    createDndPlugin({
+      options: { enableScroller: true },
+    }),
+    createEmojiPlugin({
+      renderAfterEditable: EmojiCombobox,
+    }),
+    createExitBreakPlugin({
+      options: {
+        rules: [
+          {
+            hotkey: "mod+enter",
+          },
+          {
+            hotkey: "mod+shift+enter",
+            before: true,
+          },
+          {
+            hotkey: "enter",
+            query: {
+              start: true,
+              end: true,
+              // allow: KEYS_HEADING,
+            },
+            relative: true,
+            level: 1,
+          },
+        ],
+      },
+    }),
+    createNodeIdPlugin(),
+    createResetNodePlugin({
+      options: {
+        rules: [
+          // Usage: https://platejs.org/docs/reset-node
+        ],
+      },
+    }),
+    createDeletePlugin(),
+    createSoftBreakPlugin({
+      options: {
+        rules: [
+          { hotkey: "shift+enter" },
+          {
+            hotkey: "enter",
+            query: {
+              allow: [
+                // ELEMENT_CODE_BLOCK, ELEMENT_BLOCKQUOTE, ELEMENT_TD
+              ],
+            },
+          },
+        ],
+      },
+    }),
+    createTabbablePlugin(),
+    createTrailingBlockPlugin({
+      options: { type: ELEMENT_PARAGRAPH },
+    }),
+    createCommentsPlugin(),
+    createDeserializeDocxPlugin(),
+    createDeserializeCsvPlugin(),
+    createDeserializeMdPlugin(),
+    createJuicePlugin(),
+  ],
+  {
+    components: withDraggables(
+      withPlaceholders({
+        [ELEMENT_BLOCKQUOTE]: BlockquoteElement,
+        [ELEMENT_CODE_BLOCK]: CodeBlockElement,
+        [ELEMENT_CODE_LINE]: CodeLineElement,
+        [ELEMENT_CODE_SYNTAX]: CodeSyntaxLeaf,
+        [ELEMENT_EXCALIDRAW]: ExcalidrawElement,
+        [ELEMENT_HR]: HrElement,
+        [ELEMENT_IMAGE]: ImageElement,
+        [ELEMENT_LINK]: LinkElement,
+        [ELEMENT_TOGGLE]: ToggleElement,
+        [ELEMENT_H1]: withProps(HeadingElement, { variant: "h1" }),
+        [ELEMENT_H2]: withProps(HeadingElement, { variant: "h2" }),
+        [ELEMENT_H3]: withProps(HeadingElement, { variant: "h3" }),
+        [ELEMENT_H4]: withProps(HeadingElement, { variant: "h4" }),
+        [ELEMENT_H5]: withProps(HeadingElement, { variant: "h5" }),
+        [ELEMENT_H6]: withProps(HeadingElement, { variant: "h6" }),
+        [ELEMENT_MEDIA_EMBED]: MediaEmbedElement,
+        [ELEMENT_MENTION]: MentionElement,
+        [ELEMENT_MENTION_INPUT]: MentionInputElement,
+        [ELEMENT_PARAGRAPH]: ParagraphElement,
+        [ELEMENT_TABLE]: TableElement,
+        [ELEMENT_TR]: TableRowElement,
+        [ELEMENT_TD]: TableCellElement,
+        [ELEMENT_TH]: TableCellHeaderElement,
+        [ELEMENT_TODO_LI]: TodoListElement,
+        [MARK_BOLD]: withProps(PlateLeaf, { as: "strong" }),
+        [MARK_CODE]: CodeLeaf,
+        [MARK_COMMENT]: CommentLeaf,
+        [MARK_HIGHLIGHT]: HighlightLeaf,
+        [MARK_ITALIC]: withProps(PlateLeaf, { as: "em" }),
+        [MARK_KBD]: KbdLeaf,
+        [MARK_STRIKETHROUGH]: withProps(PlateLeaf, { as: "s" }),
+        [MARK_SUBSCRIPT]: withProps(PlateLeaf, { as: "sub" }),
+        [MARK_SUPERSCRIPT]: withProps(PlateLeaf, { as: "sup" }),
+        [MARK_UNDERLINE]: withProps(PlateLeaf, { as: "u" }),
+      })
+    ),
+  }
+);
 
-const LINKS = [
+const initialValue = [
   {
-    title: "Docs",
-    href: "https://turbo.build/repo/docs",
-    description: "Find in-depth information about Turborepo features and API.",
-  },
-  {
-    title: "Learn",
-    href: "https://turbo.build/repo/docs/handbook",
-    description: "Learn more about monorepos with our handbook.",
-  },
-  {
-    title: "Templates",
-    href: "https://turbo.build/repo/docs/getting-started/from-example",
-    description: "Choose from over 15 examples and deploy with a single click.",
-  },
-  {
-    title: "Deploy",
-    href: "https://vercel.com/new",
-    description:
-      "Instantly deploy your Turborepo to a shareable URL with Vercel.",
+    id: "1",
+    type: "p",
+    children: [{ text: "Hello, World!" }],
   },
 ];
 
-export default function Page(): JSX.Element {
+function PlateEditor() {
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          examples/basic&nbsp;
-          <Code className={styles.code}>web</Code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-turbo&utm_medium=basic&utm_campaign=create-turbo"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            By{" "}
-            <Image
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              height={24}
-              priority
-              src="/vercel.svg"
-              width={100}
-            />
-          </a>
-        </div>
-      </div>
+    <DndProvider backend={HTML5Backend}>
+      <CommentsProvider users={{}} myUserId="1">
+        <Plate plugins={plugins} initialValue={initialValue}>
+          <FixedToolbar>
+            <FixedToolbarButtons />
+          </FixedToolbar>
 
-      <Button appName="web" className={styles.button}>
-        Click me!
-      </Button>
+          <Editor />
 
-      <div className={styles.hero}>
-        <div className={styles.heroContent}>
-          <div className={styles.logos}>
-            <div className={styles.circles}>
-              <Image
-                alt=""
-                height={614}
-                src="circles.svg"
-                width={614}
-                style={{ pointerEvents: "none" }}
-              />
-            </div>
-            <div className={styles.logoGradientContainer}>
-              <Gradient className={styles.logoGradient} conic small />
-            </div>
+          <FloatingToolbar>
+            <FloatingToolbarButtons />
+          </FloatingToolbar>
+          <MentionCombobox items={[]} />
+          <CommentsPopover />
+        </Plate>
+      </CommentsProvider>
+    </DndProvider>
+  );
+}
 
-            <div className={styles.logo}>
-              <Image
-                alt="Turborepo"
-                height={120}
-                priority
-                src="turborepo.svg"
-                width={120}
-                style={{ pointerEvents: "none" }}
-              />
-            </div>
-          </div>
-          <Gradient className={styles.backgroundGradient} conic />
-          <div className={styles.turborepoWordmarkContainer}>
-            <svg
-              className={styles.turborepoWordmark}
-              viewBox="0 0 506 50"
-              width={200}
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <title>Turborepo logo</title>
-              <path d="M53.7187 12.0038V1.05332H0.945312V12.0038H20.8673V48.4175H33.7968V12.0038H53.7187Z" />
-              <path d="M83.5362 49.1431C99.764 49.1431 108.67 40.8972 108.67 27.3081V1.05332H95.7401V26.0547C95.7401 33.6409 91.7821 37.9287 83.5362 37.9287C75.2904 37.9287 71.3324 33.6409 71.3324 26.0547V1.05332H58.4029V27.3081C58.4029 40.8972 67.3084 49.1431 83.5362 49.1431Z" />
-              <path d="M128.462 32.7174H141.325L151.484 48.4175H166.327L154.848 31.3321C161.313 29.0232 165.271 23.8778 165.271 16.8853C165.271 6.72646 157.685 1.05332 146.141 1.05332H115.532V48.4175H128.462V32.7174ZM128.462 22.4925V11.8719H145.481C150.033 11.8719 152.54 13.8509 152.54 17.2152C152.54 20.3816 150.033 22.4925 145.481 22.4925H128.462Z" />
-              <path d="M171.287 48.4175H205.128C215.683 48.4175 221.752 43.404 221.752 35.0262C221.752 29.419 218.189 25.593 213.967 23.8778C216.87 22.4925 220.432 19.1942 220.432 13.9828C220.432 5.60502 214.495 1.05332 204.006 1.05332H171.287V48.4175ZM183.689 19.59V11.542H202.687C206.249 11.542 208.228 12.9273 208.228 15.566C208.228 18.2047 206.249 19.59 202.687 19.59H183.689ZM183.689 29.2871H203.875C207.371 29.2871 209.284 31.0022 209.284 33.5749C209.284 36.1476 207.371 37.8628 203.875 37.8628H183.689V29.2871Z" />
-              <path d="M253.364 0.261719C236.806 0.261719 224.866 10.6185 224.866 24.7354C224.866 38.8523 236.806 49.2091 253.364 49.2091C269.922 49.2091 281.796 38.8523 281.796 24.7354C281.796 10.6185 269.922 0.261719 253.364 0.261719ZM253.364 11.4761C262.072 11.4761 268.602 16.6215 268.602 24.7354C268.602 32.8493 262.072 37.9947 253.364 37.9947C244.656 37.9947 238.126 32.8493 238.126 24.7354C238.126 16.6215 244.656 11.4761 253.364 11.4761Z" />
-              <path d="M300.429 32.7174H313.292L323.451 48.4175H338.294L326.815 31.3321C333.28 29.0232 337.238 23.8778 337.238 16.8853C337.238 6.72646 329.652 1.05332 318.108 1.05332H287.499V48.4175H300.429V32.7174ZM300.429 22.4925V11.8719H317.448C322 11.8719 324.507 13.8509 324.507 17.2152C324.507 20.3816 322 22.4925 317.448 22.4925H300.429Z" />
-              <path d="M343.254 1.05332V48.4175H389.299V37.467H355.92V29.7489H385.539V19.0622H355.92V12.0038H389.299V1.05332H343.254Z" />
-              <path d="M408.46 33.3111H425.677C437.221 33.3111 444.807 27.7699 444.807 17.2152C444.807 6.59453 437.221 1.05332 425.677 1.05332H395.53V48.4175H408.46V33.3111ZM408.46 22.5585V11.8719H424.951C429.569 11.8719 432.076 13.8509 432.076 17.2152C432.076 20.5135 429.569 22.5585 424.951 22.5585H408.46Z" />
-              <path d="M476.899 0.261719C460.341 0.261719 448.401 10.6185 448.401 24.7354C448.401 38.8523 460.341 49.2091 476.899 49.2091C493.456 49.2091 505.33 38.8523 505.33 24.7354C505.33 10.6185 493.456 0.261719 476.899 0.261719ZM476.899 11.4761C485.606 11.4761 492.137 16.6215 492.137 24.7354C492.137 32.8493 485.606 37.9947 476.899 37.9947C468.191 37.9947 461.66 32.8493 461.66 24.7354C461.66 16.6215 468.191 11.4761 476.899 11.4761Z" />
-            </svg>
-          </div>
-        </div>
-      </div>
-
-      <div className={styles.grid}>
-        {LINKS.map(({ title, href, description }) => (
-          <Card className={styles.card} href={href} key={title} title={title}>
-            {description}
-          </Card>
-        ))}
-      </div>
-    </main>
+export default function Page() {
+  return (
+    <>
+      <PlateEditor />
+    </>
   );
 }
